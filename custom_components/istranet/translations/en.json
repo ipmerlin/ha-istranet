@@ -42,6 +42,9 @@
   },
   "entity": {
     "sensor": {
+      "account_number": {
+        "name": "Account number"
+      },
       "balance": {
         "name": "Balance"
       },

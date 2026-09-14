@@ -22,6 +22,7 @@ MONEY = {
 }
 DIAGNOSTIC = {"entity_category": EntityCategory.DIAGNOSTIC}
 SENSORS = (
+    description("account_number", "mdi:identifier"),
     description("balance", "mdi:wallet", **MONEY),
     description("require", "mdi:cash-clock", **MONEY),
     description(

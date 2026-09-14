@@ -5,6 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1] / "custom_components/istranet"
 NAMES = {
+    "account_number": ("Номер лицевого счёта", "Account number"),
     "balance": ("Баланс", "Balance"),
     "require": ("К оплате", "Amount due"),
     "account_status": ("Статус подключения", "Account status"),

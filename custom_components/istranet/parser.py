@@ -5,6 +5,18 @@ from decimal import ROUND_CEILING, Decimal, InvalidOperation
 from zoneinfo import ZoneInfo
 
 
+def account_number(profile):
+    """Preserve the profile identifier as text, including leading zeroes."""
+    value = profile.get("id") if isinstance(profile, dict) else None
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, int):
+        return str(value) if value > 0 else None
+    if isinstance(value, str) and value.strip() and len(value.strip()) <= 255:
+        return value.strip()
+    return None
+
+
 def number(value):
     if value is None or isinstance(value, bool):
         return None

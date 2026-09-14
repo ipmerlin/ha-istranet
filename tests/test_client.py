@@ -49,6 +49,27 @@ class Session:
 
 
 class ClientTests(unittest.IsolatedAsyncioTestCase):
+    async def test_profile_id_preserves_leading_zeroes(self):
+        session = Session(Response(data={"id": "001234", "login": "different-login"}))
+        client = api.IstranetClient(session, "login", "secret")
+        client._token = "token"
+        self.assertEqual(await client.async_account_number(), "001234")
+        self.assertTrue(session.calls[0][1].endswith("/profile"))
+
+    async def test_profile_failure_is_optional(self):
+        for response in (Response(503), Response(403), TimeoutError(), Response(data=[])):
+            client = api.IstranetClient(Session(response), "a", "b")
+            client._token = "token"
+            self.assertIsNone(await client.async_account_number())
+
+    async def test_profile_reauth(self):
+        session = Session(
+            Response(401), Response(data={"token": "new"}), Response(data={"id": 1234})
+        )
+        client = api.IstranetClient(session, "a", "b")
+        client._token = "old"
+        self.assertEqual(await client.async_account_number(), "1234")
+
     async def test_full_fetch_and_token_is_per_request(self):
         session = Session(
             Response(data={"token": "private-token"}),
@@ -140,6 +161,22 @@ class ClientTests(unittest.IsolatedAsyncioTestCase):
 
 
 class ParserTests(unittest.TestCase):
+    def test_account_number_is_profile_id_only(self):
+        self.assertEqual(parser.account_number({"id": 1234}), "1234")
+        self.assertEqual(parser.account_number({"id": " 001234 "}), "001234")
+        for profile in (
+            None,
+            [],
+            {},
+            {"login": "1234"},
+            {"id": True},
+            {"id": 12.5},
+            {"id": 0},
+            {"id": " "},
+            {"id": "x" * 256},
+        ):
+            self.assertIsNone(parser.account_number(profile))
+
     def test_account_network_and_zero(self):
         values = parser.normalize(
             {

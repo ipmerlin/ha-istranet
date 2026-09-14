@@ -42,6 +42,9 @@
   },
   "entity": {
     "sensor": {
+      "account_number": {
+        "name": "Номер лицевого счёта"
+      },
       "balance": {
         "name": "Баланс"
       },

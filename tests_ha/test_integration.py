@@ -65,6 +65,20 @@ class FlowTests(unittest.IsolatedAsyncioTestCase):
 
 
 class LifecycleTests(unittest.IsolatedAsyncioTestCase):
+    async def test_missing_profile_keeps_balance(self):
+        coordinator = SimpleNamespace(
+            client=SimpleNamespace(
+                async_fetch=AsyncMock(return_value=({"balance": "100"}, [])),
+                async_account_number=AsyncMock(return_value=None),
+            )
+        )
+        data = await IstranetCoordinator._async_update_data(coordinator)
+        self.assertEqual(data["balance"], 100)
+        self.assertIsNone(data["account_number"])
+        coordinator.client.async_account_number.return_value = "001234"
+        data = await IstranetCoordinator._async_update_data(coordinator)
+        self.assertEqual(data["account_number"], "001234")
+
     async def test_failed_setup_closes_session(self):
         session = Mock(close=AsyncMock())
         entry = Mock(data={"username": "001", "password": "secret"})
@@ -100,6 +114,19 @@ class LifecycleTests(unittest.IsolatedAsyncioTestCase):
 
 
 class SensorTests(unittest.TestCase):
+    def test_account_number_is_text_and_unavailable_when_missing(self):
+        coordinator = Mock(
+            data={"account_number": "001234"}, account_key="stable-key", last_update_success=True
+        )
+        desc = next(d for d in SENSORS if d.key == "account_number")
+        sensor = IstranetSensor(coordinator, desc)
+        self.assertEqual(sensor.native_value, "001234")
+        self.assertTrue(sensor.available)
+        self.assertEqual(sensor.unique_id, "stable-key_account_number")
+        self.assertIsNone(sensor.native_unit_of_measurement)
+        coordinator.data = {"account_number": None}
+        self.assertFalse(sensor.available)
+
     def test_zero_and_individual_unavailability(self):
         coordinator = Mock(
             data={"balance": 0, "tariff": None}, account_key="001", last_update_success=True

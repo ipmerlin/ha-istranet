@@ -36,7 +36,9 @@ class IstranetCoordinator(DataUpdateCoordinator):
     async def _async_update_data(self):
         try:
             account, tariffs = await self.client.async_fetch()
-            return normalize(account, tariffs)
+            data = normalize(account, tariffs)
+            data["account_number"] = await self.client.async_account_number()
+            return data
         except AuthenticationError as err:
             raise ConfigEntryAuthFailed("Check Istranet credentials") from err
         except IstranetError as err:

@@ -119,6 +119,19 @@ class IstranetClient:
                 tariffs = None
             return account, tariffs
 
+    async def async_account_number(self):
+        """Read the profile ID shown on the cabinet home page."""
+        from .parser import account_number
+
+        async with self._lock:
+            if not self._token:
+                await self._authenticate()
+            try:
+                profile = await self._get("profile")
+            except (CannotConnect, InvalidResponse):
+                return None
+            return account_number(profile)
+
     async def async_payment_url(self, amount):
         """Create one SBP link on explicit demand, never during regular polling."""
         from .sbp import validate_amount, validate_url
