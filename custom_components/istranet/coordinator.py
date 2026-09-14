@@ -37,6 +37,7 @@ class IstranetCoordinator(DataUpdateCoordinator):
         try:
             account, tariffs = await self.client.async_fetch()
             data = normalize(account, tariffs)
+            self.payment.set_tariff(data.get("tariff"))
             data["account_number"] = await self.client.async_account_number()
             return data
         except AuthenticationError as err:

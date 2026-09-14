@@ -5,6 +5,13 @@ from decimal import ROUND_CEILING, Decimal, InvalidOperation
 from zoneinfo import ZoneInfo
 
 
+def payment_eligible(tariff_name):
+    """Unknown tariff must not re-enable payments for a business account."""
+    if not isinstance(tariff_name, str) or not tariff_name.strip():
+        return None
+    return "юр" not in tariff_name.casefold()
+
+
 def account_number(profile):
     """Preserve the profile identifier as text, including leading zeroes."""
     value = profile.get("id") if isinstance(profile, dict) else None

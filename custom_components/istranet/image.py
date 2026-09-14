@@ -8,7 +8,8 @@ PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    async_add_entities([SbpImage(hass, entry.runtime_data.payment)])
+    if entry.runtime_data.payment.allowed:
+        async_add_entities([SbpImage(hass, entry.runtime_data.payment)])
 
 
 class SbpImage(PaymentEntity, ImageEntity):
@@ -21,7 +22,7 @@ class SbpImage(PaymentEntity, ImageEntity):
 
     @property
     def available(self):
-        return self.payment.qr is not None
+        return self.payment.allowed and self.payment.qr is not None
 
     @property
     def image_last_updated(self):
@@ -32,4 +33,4 @@ class SbpImage(PaymentEntity, ImageEntity):
         return {"amount": self.payment.amount if self.payment.qr else None, "currency": "RUB"}
 
     async def async_image(self):
-        return self.payment.qr
+        return self.payment.qr if self.payment.allowed else None

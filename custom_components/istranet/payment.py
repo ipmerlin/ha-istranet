@@ -8,12 +8,14 @@ from homeassistant.util import dt as dt_util
 
 from .api import AuthenticationError, IstranetError, PaymentError
 from .const import DOMAIN
+from .parser import payment_eligible
 from .sbp import render_qr, validate_amount
 
 
 class SbpPayment:
     def __init__(self, hass, entry, client, account_key):
         self.hass, self.entry, self.client, self.account_key = hass, entry, client, account_key
+        self.allowed = False
         self.amount = 890
         self.qr = None
         self.created_at = None
@@ -21,6 +23,17 @@ class SbpPayment:
         self.listeners = set()
         self._cancel_expiry = None
         self._closed = False
+
+    @callback
+    def set_tariff(self, name):
+        allowed = payment_eligible(name)
+        if allowed is None or allowed == self.allowed:
+            return
+        self.allowed = allowed
+        if not allowed:
+            self.clear()
+        else:
+            self.notify()
 
     @callback
     def subscribe(self, listener):
@@ -43,6 +56,8 @@ class SbpPayment:
 
     @callback
     def set_amount(self, value):
+        if not self.allowed:
+            raise ServiceValidationError("Оплата СБП недоступна для этого тарифа")
         if self.busy:
             raise ServiceValidationError("Дождитесь получения QR")
         try:
@@ -59,6 +74,8 @@ class SbpPayment:
         self.clear()
 
     async def async_generate(self):
+        if not self.allowed:
+            raise ServiceValidationError("Оплата СБП недоступна для этого тарифа")
         if self._closed:
             raise ServiceValidationError("Интеграция выгружена")
         if self.busy:
@@ -68,7 +85,7 @@ class SbpPayment:
         try:
             url = await self.client.async_payment_url(self.amount)
             qr = await self.hass.async_add_executor_job(render_qr, url)
-            if self._closed:
+            if self._closed or not self.allowed:
                 return
             self.qr = qr
             self.created_at = dt_util.utcnow()

@@ -161,6 +161,14 @@ class ClientTests(unittest.IsolatedAsyncioTestCase):
 
 
 class ParserTests(unittest.TestCase):
+    def test_business_tariff_payment_rule(self):
+        for name in ("Юр PRO", "PRO ЮР", "юр-100", "Тариф Юридический"):
+            self.assertFalse(parser.payment_eligible(name))
+        for name in ("PRO", "Домашний 100"):
+            self.assertTrue(parser.payment_eligible(name))
+        for name in (None, "", " "):
+            self.assertIsNone(parser.payment_eligible(name))
+
     def test_account_number_is_profile_id_only(self):
         self.assertEqual(parser.account_number({"id": 1234}), "1234")
         self.assertEqual(parser.account_number({"id": " 001234 "}), "001234")

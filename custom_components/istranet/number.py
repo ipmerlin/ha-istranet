@@ -9,7 +9,8 @@ PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    async_add_entities([SbpAmount(entry.runtime_data.payment)])
+    if entry.runtime_data.payment.allowed:
+        async_add_entities([SbpAmount(entry.runtime_data.payment)])
 
 
 class SbpAmount(PaymentEntity, NumberEntity):
@@ -22,6 +23,10 @@ class SbpAmount(PaymentEntity, NumberEntity):
 
     def __init__(self, payment):
         self.setup_payment(payment, "sbp_amount")
+
+    @property
+    def available(self):
+        return self.payment.allowed
 
     @property
     def native_value(self):

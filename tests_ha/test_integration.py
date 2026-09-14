@@ -67,10 +67,11 @@ class FlowTests(unittest.IsolatedAsyncioTestCase):
 class LifecycleTests(unittest.IsolatedAsyncioTestCase):
     async def test_missing_profile_keeps_balance(self):
         coordinator = SimpleNamespace(
+            payment=Mock(),
             client=SimpleNamespace(
                 async_fetch=AsyncMock(return_value=({"balance": "100"}, [])),
                 async_account_number=AsyncMock(return_value=None),
-            )
+            ),
         )
         data = await IstranetCoordinator._async_update_data(coordinator)
         self.assertEqual(data["balance"], 100)
@@ -143,7 +144,38 @@ class PaymentTests(unittest.IsolatedAsyncioTestCase):
     def payment(self):
         hass = Mock(async_add_executor_job=AsyncMock(return_value=b"png"))
         client = Mock(async_payment_url=AsyncMock(return_value="https://qr.nspk.ru/TEST"))
-        return SbpPayment(hass, Mock(), client, "001")
+        payment = SbpPayment(hass, Mock(), client, "001")
+        payment.set_tariff("PRO")
+        return payment
+
+    async def test_business_tariff_blocks_actions_and_clears_qr(self):
+        payment = self.payment()
+        payment.qr = b"old"
+        payment.set_tariff("PRO Юр")
+        self.assertFalse(payment.allowed)
+        self.assertIsNone(payment.qr)
+        with self.assertRaises(ServiceValidationError):
+            await payment.async_generate()
+        with self.assertRaises(ServiceValidationError):
+            payment.set_amount(1000)
+        payment.client.async_payment_url.assert_not_awaited()
+        payment.set_tariff(None)
+        self.assertFalse(payment.allowed)
+        payment.set_tariff("PRO")
+        self.assertTrue(payment.allowed)
+
+    async def test_tariff_changes_during_qr_request(self):
+        payment = self.payment()
+
+        async def changed(amount):
+            payment.set_tariff("ЮР-100")
+            return "https://qr.nspk.ru/TEST"
+
+        payment.client.async_payment_url.side_effect = changed
+        with patch("custom_components.istranet.payment.async_call_later") as timer:
+            await payment.async_generate()
+        self.assertIsNone(payment.qr)
+        timer.assert_not_called()
 
     async def test_success_and_expiry_clear(self):
         payment = self.payment()

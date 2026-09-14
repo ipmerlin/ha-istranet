@@ -10,9 +10,10 @@ PARALLEL_UPDATES = 0
 
 
 async def async_setup_entry(hass, entry, async_add_entities):
-    async_add_entities(
-        [IstranetRefreshButton(entry.runtime_data), SbpGenerateButton(entry.runtime_data.payment)]
-    )
+    entities = [IstranetRefreshButton(entry.runtime_data)]
+    if entry.runtime_data.payment.allowed:
+        entities.append(SbpGenerateButton(entry.runtime_data.payment))
+    async_add_entities(entities)
 
 
 class IstranetRefreshButton(IstranetEntity, ButtonEntity):
@@ -39,7 +40,7 @@ class SbpGenerateButton(PaymentEntity, ButtonEntity):
 
     @property
     def available(self):
-        return not self.payment.busy
+        return self.payment.allowed and not self.payment.busy
 
     async def async_press(self):
         await self.payment.async_generate()
