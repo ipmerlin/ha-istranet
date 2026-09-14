@@ -3,6 +3,19 @@
 Пользовательская интеграция на основе `istranet_balance.py` для AppDaemon.
 Настраивается через интерфейс Home Assistant, AppDaemon не требуется.
 
+## Быстрая установка
+
+**1. Добавить репозиторий и скачать интеграцию через HACS**
+
+[![Добавить в HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=ipmerlin&repository=ha-istranet&category=integration)
+
+**2. Перезапустить Home Assistant, затем добавить Istranet**
+
+[![Добавить интеграцию в Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow/?domain=istranet)
+
+HACS должен быть уже установлен. При первом переходе My Home Assistant попросит
+указать адрес вашего HA. Вторая кнопка работает после скачивания интеграции и перезапуска.
+
 ## Возможности
 
 - Баланс, сумма к оплате и статус подключения.
@@ -105,8 +118,8 @@ python scripts/build.py
 
 Тесты API и разбора данных работают без реального аккаунта, на искусственных ответах.
 `tests_ha` проверяет формы, жизненный цикл, сущности и состояние QR с реальными классами
-Home Assistant; запуск предусмотрен отдельной задачей Linux CI. На текущем Windows
-окружении установленного HA нет, эти проверки и hassfest локально не выполнялись.
+Home Assistant в Linux CI. Тесты API и тесты HA успешно прошли на GitHub Actions.
+Статус проверки метаданных hassfest доступен на вкладке Actions репозитория.
 Проверка интеграции с реальным сервером HA остаётся шагом после установки.
 
 Сборка ZIP включает только файлы интеграции и логотип, без тестов, временных скриптов
