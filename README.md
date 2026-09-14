@@ -11,7 +11,7 @@
 
 **2. Перезапустить Home Assistant, затем добавить Istranet**
 
-[![Добавить интеграцию в Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow/?domain=istranet)
+[![Добавить интеграцию в Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=istranet)
 
 HACS должен быть уже установлен. При первом переходе My Home Assistant попросит
 указать адрес вашего HA. Вторая кнопка работает после скачивания интеграции и перезапуска.
