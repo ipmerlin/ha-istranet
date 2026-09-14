@@ -1,0 +1,106 @@
+{
+  "title": "Istranet",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Istranet",
+        "description": "Enter your lk.istranet.ru credentials.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Sign in again",
+        "description": "Enter the password for the same Istranet username.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Invalid username or password",
+      "cannot_connect": "Cannot reach Istranet",
+      "invalid_response": "Unexpected cabinet response"
+    },
+    "abort": {
+      "already_configured": "Username already configured",
+      "reauth_successful": "Credentials updated",
+      "unique_id_mismatch": "Use the original username; add another account separately"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Polling settings",
+        "data": {
+          "update_interval": "Update interval (minutes)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "balance": {
+        "name": "Balance"
+      },
+      "require": {
+        "name": "Amount due"
+      },
+      "account_status": {
+        "name": "Account status",
+        "state": {
+          "active": "Active",
+          "blocked": "Blocked",
+          "disabled": "Disabled"
+        }
+      },
+      "ip": {
+        "name": "IP address"
+      },
+      "gateway": {
+        "name": "Gateway"
+      },
+      "dns1": {
+        "name": "DNS 1"
+      },
+      "dns2": {
+        "name": "DNS 2"
+      },
+      "tariff": {
+        "name": "Tariff"
+      },
+      "tariff_price": {
+        "name": "Tariff price"
+      },
+      "subscription_fee": {
+        "name": "Subscription fee"
+      },
+      "tariff_speed": {
+        "name": "Tariff speed"
+      },
+      "next_payment": {
+        "name": "Next payment date"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Refresh data"
+      },
+      "sbp_generate": {
+        "name": "Generate SBP QR"
+      }
+    },
+    "number": {
+      "sbp_amount": {
+        "name": "SBP top-up amount"
+      }
+    },
+    "image": {
+      "sbp_qr": {
+        "name": "SBP payment QR"
+      }
+    }
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "title": "Istranet",
+  "config": {
+    "step": {
+      "user": {
+        "title": "Istranet",
+        "description": "Введите данные входа в lk.istranet.ru.",
+        "data": {
+          "username": "Логин",
+          "password": "Пароль"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Повторный вход",
+        "description": "Введите пароль для того же логина Istranet.",
+        "data": {
+          "username": "Логин",
+          "password": "Пароль"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Неверный логин или пароль",
+      "cannot_connect": "Не удалось связаться с Istranet",
+      "invalid_response": "ЛК вернул неожиданный ответ"
+    },
+    "abort": {
+      "already_configured": "Этот логин уже добавлен",
+      "reauth_successful": "Данные входа обновлены",
+      "unique_id_mismatch": "Введите исходный логин; другой добавьте отдельно"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Настройки обновления",
+        "data": {
+          "update_interval": "Интервал обновления (минуты)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "balance": {
+        "name": "Баланс"
+      },
+      "require": {
+        "name": "К оплате"
+      },
+      "account_status": {
+        "name": "Статус подключения",
+        "state": {
+          "active": "Активно",
+          "blocked": "Заблокировано",
+          "disabled": "Отключено"
+        }
+      },
+      "ip": {
+        "name": "IP-адрес"
+      },
+      "gateway": {
+        "name": "Шлюз"
+      },
+      "dns1": {
+        "name": "DNS 1"
+      },
+      "dns2": {
+        "name": "DNS 2"
+      },
+      "tariff": {
+        "name": "Тариф"
+      },
+      "tariff_price": {
+        "name": "Стоимость тарифа"
+      },
+      "subscription_fee": {
+        "name": "Абонентская плата"
+      },
+      "tariff_speed": {
+        "name": "Скорость тарифа"
+      },
+      "next_payment": {
+        "name": "Дата списания"
+      }
+    },
+    "button": {
+      "refresh": {
+        "name": "Обновить данные"
+      },
+      "sbp_generate": {
+        "name": "Получить QR СБП"
+      }
+    },
+    "number": {
+      "sbp_amount": {
+        "name": "Сумма пополнения СБП"
+      }
+    },
+    "image": {
+      "sbp_qr": {
+        "name": "QR для оплаты СБП"
+      }
+    }
+  }
+}
